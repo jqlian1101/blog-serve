@@ -30,9 +30,9 @@ class SuccessModel extends BasicModal {
  * 失败的数据模型
  */
 class ErrorModel extends BasicModal {
-    constructor({ errno, message }) {
+    constructor({ code, message }) {
         super({
-            errno,
+            code,
             message
         });
     }

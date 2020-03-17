@@ -8,6 +8,16 @@ const Article = seq.define("article", {
         allowNull: false,
         comment: "标题"
     },
+    keyword: {
+        type: STRING,
+        allowNull: false,
+        comment: "关键字"
+    },
+    status: {
+        type: INTEGER,
+        allowNull: false,
+        comment: "发布状态"
+    },
     summary: {
         type: STRING,
         allowNull: false,

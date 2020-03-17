@@ -8,5 +8,10 @@ module.exports = {
     queryFailInfo: {
         code: 10001,
         message: "数据查询失败"
+    },
+    // 数据查询失败
+    queryParamsFailInfo: {
+        code: 10002,
+        message: "请求参数错误"
     }
 };

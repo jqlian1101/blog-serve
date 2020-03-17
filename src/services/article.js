@@ -1,9 +1,35 @@
-const { Tag } = require("../db/model/index");
+const { Tag, Article } = require("../db/model/index");
+
+/**
+ * 创建文章
+ */
+const createArticles = async data => {
+    const result = await Article.create({ ...data });
+    return result.dataValues;
+};
+
+/**
+ * 查询文章列表
+ */
+const queryArticles = async query => {
+    const { id } = query;
+    if (id) {
+        const result = await Article.findOne({
+            where: {
+                id
+            }
+        });
+
+        return result.dataValues;
+    }
+    const result = await Article.findAndCountAll();
+    return result.rows.map(item => item.dataValues);
+};
 
 /**
  * 获取标签
  */
-const getTag = async () => {
+const queryArticleTags = async () => {
     const result = await Tag.findAndCountAll();
     const data = result.rows.map(item => item.dataValues);
     return data;
@@ -12,7 +38,7 @@ const getTag = async () => {
 /**
  * 创建标签
  */
-const createTag = async ({ name }) => {
+const createArticleTags = async ({ name }) => {
     const result = await Tag.create({
         name
     });
@@ -21,6 +47,8 @@ const createTag = async ({ name }) => {
 };
 
 module.exports = {
-    getTag,
-    createTag
+    createArticles,
+    queryArticles,
+    queryArticleTags,
+    createArticleTags
 };
