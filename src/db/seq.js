@@ -17,6 +17,19 @@ const cfg = {
         max: 5, // 连接池中最大的连接数量
         min: 0, // 最小连接数量
         idle: 10000 // 如果一个连接池 10 s 之内没有被使用，则释放
+    },
+    timezone: "+08:00",
+    define: {
+        timestamps: true,
+        paranoid: true,
+        createdAt: "created_date",
+        updatedAt: "updated_date",
+        deletedAt: "deleted_date",
+        underscored: true
+    },
+    dialectOptions: {
+        dateStrings: true,
+        typeCast: true
     }
 };
 

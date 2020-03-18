@@ -5,7 +5,10 @@ const {
     queryArticleTags,
     createArticleTags,
     createArticles,
-    queryArticles
+    queryArticles,
+
+    queryArticleCategory,
+    createArticleCategoty
 } = require("../services/article");
 
 const {
@@ -81,7 +84,7 @@ const getTagList = async (params = {}) => {
     try {
         const data = await queryArticleTags();
         return new SuccessModel({
-            result: [...data]
+            result: data.map(item => ({ id: item.id, name: item.name }))
         });
     } catch (e) {
         console.log(e);
@@ -96,8 +99,53 @@ const getTagList = async (params = {}) => {
  */
 const createArticleTag = async (params = {}) => {
     const { name } = params;
+    if (!name) {
+        return new ErrorModel({
+            ...queryParamsFailInfo
+        });
+    }
+
     try {
         await createArticleTags({ name });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...createTagFailInfo
+        });
+    }
+};
+
+/**
+ * 获取文章分类列表
+ */
+const getCategoryList = async (params = {}) => {
+    try {
+        const data = await queryArticleCategory();
+        return new SuccessModel({
+            result: data.map(item => ({ id: item.id, name: item.name }))
+        });
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...queryFailInfo
+        });
+    }
+};
+
+/**
+ * 创建分类
+ */
+const createArticleCategory = async (params = {}) => {
+    const { name } = params;
+    if (!name) {
+        return new ErrorModel({
+            ...queryParamsFailInfo
+        });
+    }
+
+    try {
+        await createArticleCategoty({ name });
         return new SuccessModel();
     } catch (e) {
         console.log(e);
@@ -112,5 +160,8 @@ module.exports = {
     getArticleDetail,
     createArticle,
     getTagList,
-    createArticleTag
+    createArticleTag,
+
+    getCategoryList,
+    createArticleCategory
 };

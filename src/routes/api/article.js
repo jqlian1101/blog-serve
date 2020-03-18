@@ -5,7 +5,9 @@ const {
     getArticleDetail,
     createArticle,
     getTagList,
-    createArticleTag
+    createArticleTag,
+    getCategoryList,
+    createArticleCategory
 } = require("../../controller/article");
 
 router.prefix("/article");
@@ -44,7 +46,23 @@ router.post("/tag-list", async (ctx, next) => {
  * 创建tag
  */
 router.post("/create-tag", async (ctx, next) => {
-    ctx.body = await createArticleTag({ name: "tag1" });
+    const { name } = ctx.request.body;
+    ctx.body = await createArticleTag({ name });
+});
+
+/**
+ * 获取tag列表
+ */
+router.post("/category-list", async (ctx, next) => {
+    ctx.body = await getCategoryList();
+});
+
+/**
+ * 创建tag
+ */
+router.post("/create-category", async (ctx, next) => {
+    const { name } = ctx.request.body;
+    ctx.body = await createArticleCategory({ name });
 });
 
 module.exports = router;
