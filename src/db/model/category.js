@@ -2,7 +2,7 @@ const seq = require("../seq");
 
 const { INTEGER, STRING, TEXT } = require("../types");
 
-const Category = seq.define("article_category", {
+const Category = seq.define("category", {
     name: {
         type: STRING,
         allowNull: false,

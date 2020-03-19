@@ -15,7 +15,10 @@ seq.authenticate()
         console.log("sequelize auth error");
     });
 
-seq.sync({ force: true }).then(() => {
+// force:true,  //   如果表存在 则删除表后重建
+// logging:true  // 日志
+// alter: true  // 模型新增字段会自动在数据库中添加
+seq.sync({ force: false }).then(() => {
     console.log("sync ok");
     process.exit();
 });

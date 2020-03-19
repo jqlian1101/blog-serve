@@ -16,7 +16,8 @@ router.prefix("/article");
  * 获取文章列表
  */
 router.post("/list", async (ctx, next) => {
-    ctx.body = await getArticleList();
+    const { pageSize, current } = ctx.request.body;
+    ctx.body = await getArticleList({ pageSize, current });
 });
 
 /**
@@ -32,7 +33,7 @@ router.post("/detail", async (ctx, next) => {
  */
 router.post("/create", async (ctx, next) => {
     const content = ctx.request.body;
-    ctx.body = await createArticle({ content });
+    ctx.body = await createArticle({ ...content });
 });
 
 /**
@@ -51,14 +52,14 @@ router.post("/create-tag", async (ctx, next) => {
 });
 
 /**
- * 获取tag列表
+ * 获取category列表
  */
 router.post("/category-list", async (ctx, next) => {
     ctx.body = await getCategoryList();
 });
 
 /**
- * 创建tag
+ * 创建category
  */
 router.post("/create-category", async (ctx, next) => {
     const { name } = ctx.request.body;

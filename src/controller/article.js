@@ -1,5 +1,6 @@
 const xss = require("xss");
 
+const { PAGE_SIZE } = require("../common/constant");
 const { SuccessModel, ErrorModel } = require("../model/ResModel");
 const {
     queryArticleTags,
@@ -12,6 +13,12 @@ const {
 } = require("../services/article");
 
 const {
+    createArticleCategoryRelation
+} = require("../services/articleCategory");
+
+const { createArticleTagRelation } = require("../services/articleTag");
+
+const {
     queryFailInfo,
     createTagFailInfo,
     createArticleFailInfo,
@@ -22,10 +29,13 @@ const {
  * 获取文章列表
  */
 const getArticleList = async (params = {}) => {
+    const { pageSize = PAGE_SIZE, current = 1 } = params;
     try {
-        const result = await queryArticles({});
+        const data = await queryArticles({ pageSize, current });
         return new SuccessModel({
-            result
+            ...data,
+            pageSize,
+            current
         });
     } catch (e) {
         console.log(e);
@@ -61,13 +71,32 @@ const getArticleDetail = async (params = {}) => {
  * 创建文章
  */
 const createArticle = async (params = {}) => {
-    const { content = {} } = params;
     try {
-        await createArticles({
-            ...content,
-            content: xss(content.content || ""),
-            readNumber: 0
+        const { tags, categorys, ...otherData } = params;
+        const newArticle = await createArticles({
+            ...otherData,
+            content: xss(params.content || ""),
+            readNumber: params.readNumber || 0
         });
+
+        const tagList = tags.split(",");
+        const categoryList = categorys.split(",");
+
+        await Promise.all([
+            ...tagList.map(item =>
+                createArticleTagRelation({
+                    articleId: newArticle.id,
+                    tagId: item
+                })
+            ),
+            ...categoryList.map(item =>
+                createArticleCategoryRelation({
+                    articleId: newArticle.id,
+                    categoryId: item
+                })
+            )
+        ]);
+
         return new SuccessModel();
     } catch (e) {
         console.log(e);

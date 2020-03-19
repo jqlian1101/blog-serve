@@ -32,6 +32,12 @@ const Article = seq.define("article", {
         type: INTEGER,
         allowNull: false,
         comment: "阅读量"
+    },
+    isDelete: {
+        type: INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "是否已删除，1: 已删除，0: 未删除"
     }
 });
 

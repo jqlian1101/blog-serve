@@ -1,12 +1,12 @@
 const seq = require("../seq");
 
-const { INTEGER, STRING, TEXT } = require("../types");
+const { STRING } = require("../types");
 
-const Tag = seq.define("article_tab", {
+const Tag = seq.define("tag", {
     name: {
         type: STRING,
         allowNull: false,
-        comment: "TagName"
+        comment: "标签名称"
     }
 });
 
