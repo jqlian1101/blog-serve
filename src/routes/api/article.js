@@ -4,10 +4,12 @@ const {
     getArticleList,
     getArticleDetail,
     createArticle,
+    deleteArticle,
+    changeArticleStatus,
     getTagList,
     createArticleTag,
     getCategoryList,
-    createArticleCategory
+    createArticleCategory,
 } = require("../../controller/article");
 
 router.prefix("/article");
@@ -34,6 +36,22 @@ router.post("/detail", async (ctx, next) => {
 router.post("/create", async (ctx, next) => {
     const content = ctx.request.body;
     ctx.body = await createArticle({ ...content });
+});
+
+/**
+ * 删除文章
+ */
+router.post("/del", async (ctx, next) => {
+    const content = ctx.request.body;
+    ctx.body = await deleteArticle({ ...content });
+});
+
+/**
+ * 修改文章发布状态
+ */
+router.post("/change-status", async (ctx, next) => {
+    const { id, status } = ctx.request.body;
+    ctx.body = await changeArticleStatus({ id, status });
 });
 
 /**

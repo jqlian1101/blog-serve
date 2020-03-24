@@ -3,26 +3,35 @@ const xss = require("xss");
 const { PAGE_SIZE } = require("../common/constant");
 const { SuccessModel, ErrorModel } = require("../model/ResModel");
 const {
-    queryArticleTags,
-    createArticleTags,
     createArticles,
     queryArticles,
-
-    queryArticleCategory,
-    createArticleCategoty
+    destoryArticle,
+    setArticleStatus
 } = require("../services/article");
 
-const {
-    createArticleCategoryRelation
-} = require("../services/articleCategory");
+const { queryArticleTags, createArticleTags } = require("../services/tag");
 
-const { createArticleTagRelation } = require("../services/articleTag");
+const {
+    queryArticleCategory,
+    createArticleCategoty
+} = require("../services/category");
+
+const {
+    createArticleCategoryRelation,
+    deleteArticleCategoryRelation
+} = require("../services/articleCategoryRelation");
+
+const {
+    createArticleTagRelation,
+    deleteArticleTagRelation
+} = require("../services/articleTagRelation");
 
 const {
     queryFailInfo,
     createTagFailInfo,
     createArticleFailInfo,
-    queryParamsFailInfo
+    queryParamsFailInfo,
+    deleteArticleFailInfo
 } = require("../model/ErrorInfo");
 
 /**
@@ -72,25 +81,54 @@ const getArticleDetail = async (params = {}) => {
  */
 const createArticle = async (params = {}) => {
     try {
-        const { tags, categorys, ...otherData } = params;
+        const {
+            tags,
+            categories,
+            deleteCategory,
+            deleteTag,
+            ...otherData
+        } = params;
+
         const newArticle = await createArticles({
             ...otherData,
             content: xss(params.content || ""),
             readNumber: params.readNumber || 0
         });
 
-        const tagList = tags.split(",");
-        const categoryList = categorys.split(",");
+        const arr = [];
+        tags.map(item =>
+            arr.push({
+                fn: createArticleTagRelation,
+                params: {
+                    articleId: newArticle.id,
+                    tagId: item
+                }
+            })
+        );
+
+        categories.map(item =>
+            arr.push({
+                fn: createArticleCategoryRelation,
+                params: {
+                    articleId: newArticle.id,
+                    categoryId: item
+                }
+            })
+        );
+
+        for (let i = 0; i < arr.length; i++) {
+            await arr[i].fn({ ...arr[i].params });
+        }
 
         await Promise.all([
-            ...tagList.map(item =>
-                createArticleTagRelation({
+            ...deleteTag.map(item =>
+                deleteArticleTagRelation({
                     articleId: newArticle.id,
                     tagId: item
                 })
             ),
-            ...categoryList.map(item =>
-                createArticleCategoryRelation({
+            ...deleteCategory.map(item =>
+                deleteArticleCategoryRelation({
                     articleId: newArticle.id,
                     categoryId: item
                 })
@@ -102,6 +140,45 @@ const createArticle = async (params = {}) => {
         console.log(e);
         return new ErrorModel({
             ...createArticleFailInfo
+        });
+    }
+};
+
+const deleteArticle = async ({ id }) => {
+    if (!id) {
+        return new ErrorModel({
+            ...queryParamsFailInfo
+        });
+    }
+    try {
+        const result = await destoryArticle(id);
+        if (!result) throw Error(`删除${id}文章失败`);
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...deleteArticleFailInfo
+        });
+    }
+};
+
+/**
+ * 修改文章发布状态
+ */
+const changeArticleStatus = async ({ id, status = 0 }) => {
+    if (!id) {
+        return new ErrorModel({
+            ...queryParamsFailInfo
+        });
+    }
+
+    try {
+        await setArticleStatus({ id, status });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...deleteArticleFailInfo
         });
     }
 };
@@ -188,6 +265,9 @@ module.exports = {
     getArticleList,
     getArticleDetail,
     createArticle,
+    deleteArticle,
+    changeArticleStatus,
+
     getTagList,
     createArticleTag,
 

@@ -1,6 +1,4 @@
-const { Tag, Article, Category } = require("../db/model/index");
-
-const { objKeyToHump } = require("./_util");
+const { Article, Tag, Category } = require("../db/model/index");
 
 /**
  * 创建文章
@@ -73,60 +71,25 @@ const queryArticles = async query => {
     });
 
     return {
-        result: result.rows
-            .map(item => item.dataValues)
-            .map(item => objKeyToHump(item)),
+        result: result.rows.map(item => item.dataValues),
         count: result.count
     };
 };
 
-/**
- * 获取标签
- */
-const queryArticleTags = async () => {
-    const result = await Tag.findAndCountAll();
-    const data = result.rows.map(item => item.dataValues);
-    return data;
+const destoryArticle = async id => {
+    const result = await Article.destroy({ where: { id } });
+    return result > 0;
 };
 
-/**
- * 创建标签
- */
-const createArticleTags = async ({ name }) => {
-    const result = await Tag.create({
-        name
-    });
-
-    return result.dataValues;
-};
-
-/**
- * 获取分类列表
- */
-const queryArticleCategory = async () => {
-    const result = await Category.findAndCountAll();
-    const data = result.rows.map(item => item.dataValues);
-    return data;
-};
-
-/**
- * 创建分类
- */
-const createArticleCategoty = async ({ name }) => {
-    const result = await Category.create({
-        name
-    });
-
-    return result.dataValues;
+const setArticleStatus = async ({ id, status }) => {
+    // 执行修改
+    const result = await Article.update({ status }, { where: { id } });
+    return result[0] > 0; // 修改的行数
 };
 
 module.exports = {
     createArticles,
     queryArticles,
-
-    queryArticleTags,
-    createArticleTags,
-
-    queryArticleCategory,
-    createArticleCategoty
+    destoryArticle,
+    setArticleStatus
 };

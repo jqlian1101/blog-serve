@@ -11,7 +11,8 @@ const getArticleCategoryRelation = async ({ articleId, categoryId }) => {
     const whereOpt = {};
     articleId && (whereOpt.articleId = articleId);
     categoryId && (whereOpt.categoryId = categoryId);
-    const result = await ArticleCategoryRelation.findAll({ ...whereOpt });
+
+    const result = await ArticleCategoryRelation.findOne({ where: { ...whereOpt } });
 
     if (!result) return {};
     return result.dataValues;
@@ -21,7 +22,11 @@ const getArticleCategoryRelation = async ({ articleId, categoryId }) => {
  * 创建 文章&分类 关系
  */
 const createArticleCategoryRelation = async ({ articleId, categoryId }) => {
-    const relation = getArticleCategoryRelation({ articleId, categoryId });
+    const relation = await getArticleCategoryRelation({
+        articleId,
+        categoryId
+    });
+
     if (!isEmpty(relation)) return;
 
     const result = await ArticleCategoryRelation.create({
@@ -32,6 +37,18 @@ const createArticleCategoryRelation = async ({ articleId, categoryId }) => {
     return result.dataValues;
 };
 
+const deleteArticleCategoryRelation = async ({ categoryId, articleId }) => {
+    const result = await ArticleCategoryRelation.destroy({
+        where: {
+            categoryId,
+            articleId
+        }
+    });
+
+    return result > 0;
+};
+
 module.exports = {
-    createArticleCategoryRelation
+    createArticleCategoryRelation,
+    deleteArticleCategoryRelation
 };
