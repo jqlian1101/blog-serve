@@ -1,4 +1,9 @@
 const { Article, Tag, Category } = require("../db/model/index");
+const Sequelize = require("sequelize");
+
+const { isNil } = require("../utils/util");
+
+const Op = Sequelize.Op;
 
 /**
  * 创建文章
@@ -21,7 +26,7 @@ const createArticles = async data => {
  * @param {Object} { id: 文章id，查询详情, pageSize, current: 当前页 }
  */
 const queryArticles = async query => {
-    const { id, pageSize, current } = query;
+    const { id, pageSize, current, title, keyword, status } = query;
     if (id) {
         const result = await Article.findByPk(id, {
             attributes: [
@@ -54,10 +59,19 @@ const queryArticles = async query => {
         return result.dataValues;
     }
 
+    const searchRule = {};
+    title && (searchRule.title = { [Op.like]: `%${title}%` });
+    keyword && (searchRule.keyword = { [Op.like]: `%${keyword}%` });
+    !isNil(status) && (searchRule.status = status);
+
+    console.log("---------------------------");
+    console.log(searchRule);
+
     const result = await Article.findAndCountAll({
         limit: pageSize,
         offset: pageSize * (current - 1),
         order: [["update_date", "desc"]],
+        where: searchRule,
         attributes: [
             "id",
             "title",

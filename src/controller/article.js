@@ -40,7 +40,7 @@ const {
 const getArticleList = async (params = {}) => {
     const { pageSize = PAGE_SIZE, current = 1 } = params;
     try {
-        const data = await queryArticles({ pageSize, current });
+        const data = await queryArticles(params);
         return new SuccessModel({
             ...data,
             pageSize,

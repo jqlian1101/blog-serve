@@ -18,8 +18,7 @@ router.prefix("/article");
  * 获取文章列表
  */
 router.post("/list", async (ctx, next) => {
-    const { pageSize, current } = ctx.request.body;
-    ctx.body = await getArticleList({ pageSize, current });
+    ctx.body = await getArticleList({ ...ctx.request.body });
 });
 
 /**

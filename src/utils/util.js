@@ -46,8 +46,12 @@ const isEmpty = value => {
     return true;
 };
 
+const isNil = x => x === null || x === undefined;
+
+
 module.exports = {
     toHump,
     toLine,
-    isEmpty
+    isEmpty,
+    isNil
 };
