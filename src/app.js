@@ -8,6 +8,8 @@ const logger = require("koa-logger");
 const cors = require("koa2-cors");
 
 const articleAPI = require("./routes/api/article");
+const tagAPI = require("./routes/api/tag");
+const categoryAPI = require("./routes/api/category");
 
 // error handler
 onerror(app);
@@ -42,6 +44,8 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(articleAPI.routes(), articleAPI.allowedMethods());
+app.use(tagAPI.routes(), tagAPI.allowedMethods());
+app.use(categoryAPI.routes(), categoryAPI.allowedMethods());
 
 // error-handling
 app.on("error", (err, ctx) => {
