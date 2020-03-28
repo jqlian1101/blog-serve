@@ -22,7 +22,7 @@ const toLine = name => {
 };
 
 /**
- *
+ * 判断是否为空
  * @param {*} value string, null, undefind, [], {}
  */
 const isEmpty = value => {

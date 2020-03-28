@@ -64,9 +64,6 @@ const queryArticles = async query => {
     keyword && (searchRule.keyword = { [Op.like]: `%${keyword}%` });
     !isNil(status) && (searchRule.status = status);
 
-    console.log("---------------------------");
-    console.log(searchRule);
-
     const result = await Article.findAndCountAll({
         limit: pageSize,
         offset: pageSize * (current - 1),
