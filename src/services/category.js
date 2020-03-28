@@ -13,7 +13,9 @@ const queryCategory = async (query = {}) => {
     if (isEmpty(query)) {
         const result = await Category.findAndCountAll();
         const data = result.rows.map(item => item.dataValues);
-        return data;
+        return {
+            result: data
+        };
     }
 
     const { pageSize, current, name } = query;

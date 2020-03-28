@@ -13,7 +13,9 @@ const queryTags = async (query = {}) => {
     if (isEmpty(query)) {
         const result = await Tag.findAndCountAll();
         const data = result.rows.map(item => item.dataValues);
-        return data;
+        return {
+            result: data
+        };
     }
 
     const { pageSize, current, name } = query;
