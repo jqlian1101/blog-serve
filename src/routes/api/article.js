@@ -6,10 +6,11 @@ const {
     createArticle,
     deleteArticle,
     changeArticleStatus,
+
     getTagList,
     createArticleTag,
     getCategoryList,
-    createArticleCategory,
+    createArticleCategory
 } = require("../../controller/article");
 
 router.prefix("/article");
@@ -19,6 +20,17 @@ router.prefix("/article");
  */
 router.post("/list", async (ctx, next) => {
     ctx.body = await getArticleList({ ...ctx.request.body });
+});
+
+/**
+ * 获取推荐文章
+ */
+router.post("/recommendations", async (ctx, next) => {
+    ctx.body = await getArticleList({
+        current: 1,
+        pageSize: 5,
+        order: [["create_date", "desc"]]
+    });
 });
 
 /**

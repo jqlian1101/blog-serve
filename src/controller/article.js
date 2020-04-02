@@ -38,9 +38,9 @@ const {
  * 获取文章列表
  */
 const getArticleList = async (params = {}) => {
-    const { pageSize = PAGE_SIZE, current = 1 } = params;
+    const { pageSize = PAGE_SIZE, current = 1, ...otherParams } = params;
     try {
-        const data = await queryArticles(params);
+        const data = await queryArticles({ pageSize, current, ...otherParams });
         return new SuccessModel({
             ...data,
             pageSize,
@@ -53,6 +53,7 @@ const getArticleList = async (params = {}) => {
         });
     }
 };
+
 
 /**
  * 查询文章详情
@@ -92,7 +93,8 @@ const createArticle = async (params = {}) => {
         const newArticle = await createArticles({
             ...otherData,
             content: xss(params.content || ""),
-            readNumber: params.readNumber || 0
+            readNumber: params.readNumber || 0,
+            like: params.like || 0
         });
 
         const arr = [];

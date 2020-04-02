@@ -19,7 +19,7 @@ const Article = seq.define("article", {
         comment: "发布状态"
     },
     summary: {
-        type: STRING,
+        type: STRING(1000),
         allowNull: false,
         comment: "概览"
     },
@@ -33,11 +33,10 @@ const Article = seq.define("article", {
         allowNull: false,
         comment: "阅读量"
     },
-    isDelete: {
+    like: {
         type: INTEGER,
-        defaultValue: 0,
         allowNull: false,
-        comment: "是否已删除，1: 已删除，0: 未删除"
+        comment: "赞"
     }
 });
 

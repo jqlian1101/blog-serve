@@ -2,8 +2,21 @@ const { Article, Tag, Category } = require("../db/model/index");
 const Sequelize = require("sequelize");
 
 const { isNil } = require("../utils/util");
+const { PAGE_SIZE } = require("../common/constant");
 
 const Op = Sequelize.Op;
+
+const QUERY_ARTICLE_LIST_ATTR = [
+    "id",
+    "title",
+    "keyword",
+    "status",
+    "summary",
+    "readNumber",
+    "like",
+    ["create_date", "createDate"], // 字段重命名
+    ["update_date", "updateDate"]
+];
 
 /**
  * 创建文章
@@ -21,43 +34,67 @@ const createArticles = async data => {
 };
 
 /**
- * 查询文章列表
- * 如果文章id存在，则查询文章详情，否则查询列表
- * @param {Object} { id: 文章id，查询详情, pageSize, current: 当前页 }
+ * 通过分类查询文章列表
+ * @param { Object } { tagId: '' }
  */
-const queryArticles = async query => {
-    const { id, pageSize, current, title, keyword, status } = query;
-    if (id) {
-        const result = await Article.findByPk(id, {
-            attributes: [
-                "id",
-                "title",
-                "keyword",
-                "status",
-                "summary",
-                "readNumber",
-                "content",
-                ["create_date", "createDate"], // 字段重命名
-                ["update_date", "updateDate"]
-            ],
-            include: [
-                {
-                    model: Tag,
-                    attributes: ["id", "name"], //过滤属性
-                    through: { attributes: [] }, // 排除中间表
-                    required: false
-                },
-                {
-                    model: Category,
-                    attributes: ["id", "name"], //过滤属性
-                    through: { attributes: [] }, // 排除中间表
-                    required: false
-                }
-            ]
-        });
+const queryArticlesByTags = async query => {
+    const { pageSize, current } = query;
+    console.log(query.tagId);
+    const res = await Tag.findByPk(query.tagId, {
+        attributes: ["id", "name"],
+        include: [
+            {
+                model: Article,
+                attributes: [...QUERY_ARTICLE_LIST_ATTR], //过滤属性
+                through: { attributes: [] }, // 排除中间表
+                required: false,
+                order: [["update_date", "desc"]]
+            }
+        ],
+        limit: pageSize,
+        offset: pageSize * (current - 1)
+    });
 
-        return result.dataValues;
-    }
+    const result = res.dataValues;
+
+    return {
+        tagInfo: { id: result.id, name: result.name },
+        result: [...result.articles]
+    };
+};
+
+/**
+ * 查询文章详情
+ * @param { Object } { id }
+ */
+const queryArticlesById = async query => {
+    const result = await Article.findByPk(query.id, {
+        attributes: [...QUERY_ARTICLE_LIST_ATTR, "content"],
+        include: [
+            {
+                model: Tag,
+                attributes: ["id", "name"], //过滤属性
+                through: { attributes: [] }, // 排除中间表
+                required: false
+            },
+            {
+                model: Category,
+                attributes: ["id", "name"], //过滤属性
+                through: { attributes: [] }, // 排除中间表
+                required: false
+            }
+        ]
+    });
+
+    return result.dataValues;
+};
+
+/**
+ * 查询文章列表
+ * @param {Object} { pageSize, current: 当前页 }
+ */
+const queryArticleList = async query => {
+    const { pageSize, current, title, keyword, status, ...otherParams } = query;
 
     const searchRule = {};
     title && (searchRule.title = { [Op.like]: `%${title}%` });
@@ -69,22 +106,31 @@ const queryArticles = async query => {
         offset: pageSize * (current - 1),
         order: [["update_date", "desc"]],
         where: searchRule,
-        attributes: [
-            "id",
-            "title",
-            "keyword",
-            "status",
-            "summary",
-            "readNumber",
-            ["create_date", "createDate"],
-            ["update_date", "updateDate"]
-        ]
+        attributes: [...QUERY_ARTICLE_LIST_ATTR],
+        ...otherParams
     });
 
     return {
         result: result.rows.map(item => item.dataValues),
         count: result.count
     };
+};
+
+/**
+ * 查询文章列表
+ * 如果文章id存在，则查询文章详情，否则查询列表
+ * @param {Object} { id: 文章id，查询详情, pageSize, current: 当前页 }
+ */
+const queryArticles = async query => {
+    if (query.tagId) {
+        return queryArticlesByTags(query);
+    }
+
+    if (query.id) {
+        return queryArticlesById(query);
+    }
+
+    return queryArticleList(query);
 };
 
 const destoryArticle = async id => {
