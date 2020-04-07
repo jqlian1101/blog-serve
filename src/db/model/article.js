@@ -3,6 +3,11 @@ const seq = require("../seq");
 const { INTEGER, STRING, TEXT } = require("../types");
 
 const Article = seq.define("article", {
+    userId: {
+        type: INTEGER,
+        allowNull: true,
+        comment: '作者 ID'
+    },
     title: {
         type: STRING,
         allowNull: false,

@@ -2,6 +2,8 @@ const Article = require("./article");
 const Category = require("./category");
 const Tag = require("./tag");
 
+const User = require("./user");
+
 const ArticleTagRelation = require("./article_tag");
 const ArticleCategoryRelation = require("./article_category");
 
@@ -41,10 +43,15 @@ Category.belongsToMany(Article, {
     constraints: false
 });
 
+Article.belongsTo(User, {
+    foreignKey: "userId"
+});
+
 module.exports = {
     Article,
     Category,
     Tag,
     ArticleTagRelation,
-    ArticleCategoryRelation
+    ArticleCategoryRelation,
+    User
 };
