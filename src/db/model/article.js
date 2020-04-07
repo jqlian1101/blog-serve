@@ -6,43 +6,46 @@ const Article = seq.define("article", {
     userId: {
         type: INTEGER,
         allowNull: true,
-        comment: '作者 ID'
+        comment: "作者 ID",
     },
     title: {
         type: STRING,
         allowNull: false,
-        comment: "标题"
+        comment: "标题",
     },
     keyword: {
         type: STRING,
         allowNull: false,
-        comment: "关键字"
+        comment: "关键字",
     },
     status: {
         type: INTEGER,
         allowNull: false,
-        comment: "发布状态"
+        defaultValue: 0,
+        comment: "发布状态，0：草稿，1：已发布",
     },
     summary: {
         type: STRING(1000),
         allowNull: false,
-        comment: "概览"
+        comment: "概览",
     },
     content: {
         type: TEXT,
         allowNull: false,
-        comment: "内容"
+        comment: "内容",
     },
     readNumber: {
         type: INTEGER,
         allowNull: false,
-        comment: "阅读量"
+        defaultValue: 0,
+        comment: "阅读量",
     },
     like: {
         type: INTEGER,
         allowNull: false,
-        comment: "赞"
-    }
+        defaultValue: 0,
+        comment: "赞",
+    },
 });
 
 module.exports = Article;
