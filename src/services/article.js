@@ -15,13 +15,13 @@ const QUERY_ARTICLE_LIST_ATTR = [
     "readNumber",
     "like",
     ["create_date", "createDate"], // 字段重命名
-    ["update_date", "updateDate"]
+    ["update_date", "updateDate"],
 ];
 
 /**
  * 创建文章
  */
-const createArticles = async data => {
+const createArticles = async (data) => {
     const { id, ...otherData } = data;
     let result;
     if (id) {
@@ -37,9 +37,9 @@ const createArticles = async data => {
  * 通过分类查询文章列表
  * @param { Object } { tagId: '' }
  */
-const queryArticlesByTags = async query => {
+const queryArticlesByTags = async (query) => {
     const { pageSize, current } = query;
-    console.log(query.tagId);
+
     const res = await Tag.findByPk(query.tagId, {
         attributes: ["id", "name"],
         include: [
@@ -48,18 +48,18 @@ const queryArticlesByTags = async query => {
                 attributes: [...QUERY_ARTICLE_LIST_ATTR], //过滤属性
                 through: { attributes: [] }, // 排除中间表
                 required: false,
-                order: [["update_date", "desc"]]
-            }
+                order: [["update_date", "desc"]],
+            },
         ],
         limit: pageSize,
-        offset: pageSize * (current - 1)
+        offset: pageSize * (current - 1),
     });
 
     const result = res.dataValues;
 
     return {
         tagInfo: { id: result.id, name: result.name },
-        result: [...result.articles]
+        result: [...result.articles],
     };
 };
 
@@ -67,7 +67,7 @@ const queryArticlesByTags = async query => {
  * 查询文章详情
  * @param { Object } { id }
  */
-const queryArticlesById = async query => {
+const queryArticlesById = async (query) => {
     const result = await Article.findByPk(query.id, {
         attributes: [...QUERY_ARTICLE_LIST_ATTR, "content"],
         include: [
@@ -75,15 +75,15 @@ const queryArticlesById = async query => {
                 model: Tag,
                 attributes: ["id", "name"], //过滤属性
                 through: { attributes: [] }, // 排除中间表
-                required: false
+                required: false,
             },
             {
                 model: Category,
                 attributes: ["id", "name"], //过滤属性
                 through: { attributes: [] }, // 排除中间表
-                required: false
-            }
-        ]
+                required: false,
+            },
+        ],
     });
 
     return result.dataValues;
@@ -93,7 +93,7 @@ const queryArticlesById = async query => {
  * 查询文章列表
  * @param {Object} { pageSize, current: 当前页 }
  */
-const queryArticleList = async query => {
+const queryArticleList = async (query) => {
     const { pageSize, current, title, keyword, status, ...otherParams } = query;
 
     const searchRule = {};
@@ -107,12 +107,12 @@ const queryArticleList = async query => {
         order: [["update_date", "desc"]],
         where: searchRule,
         attributes: [...QUERY_ARTICLE_LIST_ATTR],
-        ...otherParams
+        ...otherParams,
     });
 
     return {
-        result: result.rows.map(item => item.dataValues),
-        count: result.count
+        result: result.rows.map((item) => item.dataValues),
+        count: result.count,
     };
 };
 
@@ -121,7 +121,7 @@ const queryArticleList = async query => {
  * 如果文章id存在，则查询文章详情，否则查询列表
  * @param {Object} { id: 文章id，查询详情, pageSize, current: 当前页 }
  */
-const queryArticles = async query => {
+const queryArticles = async (query) => {
     if (query.tagId) {
         return queryArticlesByTags(query);
     }
@@ -133,7 +133,7 @@ const queryArticles = async query => {
     return queryArticleList(query);
 };
 
-const destoryArticle = async id => {
+const destoryArticle = async (id) => {
     const result = await Article.destroy({ where: { id } });
     return result > 0;
 };
@@ -148,5 +148,5 @@ module.exports = {
     createArticles,
     queryArticles,
     destoryArticle,
-    setArticleStatus
+    setArticleStatus,
 };

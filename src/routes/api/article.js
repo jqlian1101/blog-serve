@@ -7,11 +7,13 @@ const {
     deleteArticle,
     changeArticleStatus,
 
-    getTagList,
-    createArticleTag,
-    getCategoryList,
-    createArticleCategory
+    // getTagList,
+    // createArticleTag,
+    // getCategoryList,
+    // createArticleCategory,
 } = require("../../controller/article");
+
+const { comment, getCommentsByArticleId } = require("../../controller/comment");
 
 router.prefix("/article");
 
@@ -29,7 +31,7 @@ router.post("/recommendations", async (ctx, next) => {
     ctx.body = await getArticleList({
         current: 1,
         pageSize: 5,
-        order: [["create_date", "desc"]]
+        order: [["create_date", "desc"]],
     });
 });
 
@@ -66,33 +68,49 @@ router.post("/change-status", async (ctx, next) => {
 });
 
 /**
- * 获取tag列表
+ * 发表文章评论
  */
-router.post("/tag-list", async (ctx, next) => {
-    ctx.body = await getTagList();
+router.post("/comment", async (ctx, next) => {
+    ctx.body = await comment({ ...ctx.request.body });
 });
 
 /**
- * 创建tag
+ * 获取评论列表
  */
-router.post("/create-tag", async (ctx, next) => {
-    const { name } = ctx.request.body;
-    ctx.body = await createArticleTag({ name });
+router.post("/:articleId/comments", async (ctx, next) => {
+    console.log(ctx.params);
+    const { articleId } = ctx.params;
+    ctx.body = await getCommentsByArticleId({ id: articleId });
 });
 
-/**
- * 获取category列表
- */
-router.post("/category-list", async (ctx, next) => {
-    ctx.body = await getCategoryList();
-});
+// /**
+//  * 获取tag列表
+//  */
+// router.post("/tag-list", async (ctx, next) => {
+//     ctx.body = await getTagList();
+// });
 
-/**
- * 创建category
- */
-router.post("/create-category", async (ctx, next) => {
-    const { name } = ctx.request.body;
-    ctx.body = await createArticleCategory({ name });
-});
+// /**
+//  * 创建tag
+//  */
+// router.post("/create-tag", async (ctx, next) => {
+//     const { name } = ctx.request.body;
+//     ctx.body = await createArticleTag({ name });
+// });
+
+// /**
+//  * 获取category列表
+//  */
+// router.post("/category-list", async (ctx, next) => {
+//     ctx.body = await getCategoryList();
+// });
+
+// /**
+//  * 创建category
+//  */
+// router.post("/create-category", async (ctx, next) => {
+//     const { name } = ctx.request.body;
+//     ctx.body = await createArticleCategory({ name });
+// });
 
 module.exports = router;

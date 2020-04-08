@@ -53,6 +53,10 @@ Comment.belongsTo(User, {
     foreignKey: "fromUid",
 });
 
+Comment.belongsTo(Article, {
+    foreignKey: "topicId",
+});
+
 // 关联回复的评论id
 CommentReply.belongsTo(Comment, {
     foreignKey: "commentId",

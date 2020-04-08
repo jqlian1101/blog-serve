@@ -12,7 +12,7 @@ module.exports={
     // 注册失败
     registerFailInfo: {
         code: 11002,
-        message: "注册失败，请重试"
+        message: "注册失败，请稍后再试"
     },
     // 用户名不存在
     registerUserNameNotExistInfo: {
@@ -32,7 +32,7 @@ module.exports={
     // 修改密码失败
     changePasswordFailInfo: {
         code: 11006,
-        message: "修改密码失败，请重试"
+        message: "修改密码失败，请稍后再试"
     },
     // 上传文件过大
     uploadFileSizeFailInfo: {
