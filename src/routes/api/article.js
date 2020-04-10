@@ -13,25 +13,38 @@ const {
     // createArticleCategory,
 } = require("../../controller/article");
 
-const { comment, getCommentsByArticleId } = require("../../controller/comment");
+const { comment, getCommentsByArticleId, getRepliesByCommentId, setCommentReply } = require("../../controller/comment");
 
 router.prefix("/article");
 
 /**
  * 获取文章列表
+ * isSign: 标记客户端还是管理端，0: 客户端，1001: 管理端
  */
 router.post("/list", async (ctx, next) => {
-    ctx.body = await getArticleList({ ...ctx.request.body });
+    const { isSign, ...otherParams } = ctx.request.body;
+    let result = { ...otherParams }
+    if (isSign === '0') {
+        result.status = 1;
+    }
+    ctx.body = await getArticleList({ ...result });
 });
 
 /**
  * 获取推荐文章
  */
 router.post("/recommendations", async (ctx, next) => {
-    ctx.body = await getArticleList({
+    const { isSign, ...otherParams } = ctx.request.body;
+    let result = {
         current: 1,
         pageSize: 5,
         order: [["create_date", "desc"]],
+    }
+    if (isSign === '0') {
+        result.status = 1
+    }
+    ctx.body = await getArticleList({
+        ...result
     });
 });
 
@@ -78,9 +91,29 @@ router.post("/comment", async (ctx, next) => {
  * 获取评论列表
  */
 router.post("/:articleId/comments", async (ctx, next) => {
-    console.log(ctx.params);
     const { articleId } = ctx.params;
     ctx.body = await getCommentsByArticleId({ id: articleId });
+});
+
+
+/**
+ * 获取评论的回复列表
+ */
+router.post("/:commentId/replies", async (ctx, next) => {
+    const { commentId } = ctx.params;
+    ctx.body = await getRepliesByCommentId({ id: commentId });
+});
+
+/**
+ * 获取评论的回复列表
+ */
+router.post("/:commentId/reply", async (ctx, next) => {
+    const { commentId } = ctx.params;
+    const query = {
+        ...ctx.request.body,
+        commentId
+    }
+    ctx.body = await setCommentReply({ ...query });
 });
 
 // /**

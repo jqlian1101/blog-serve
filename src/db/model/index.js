@@ -57,20 +57,31 @@ Comment.belongsTo(Article, {
     foreignKey: "topicId",
 });
 
-// 关联回复的评论id
+/**
+ * 关联评论和回复
+ */
+
+Comment.hasMany(CommentReply, {
+    foreignKey: 'commentId',
+    sourceKey: 'id',
+    as: 'replies'
+})
+
 CommentReply.belongsTo(Comment, {
-    foreignKey: "commentId",
-});
+    foreignKey: 'commentId',
+    targetKey: 'id',
+})
+
 
 // 关联回复者id
-CommentReply.belongsTo(User, {
-    foreignKey: "fromUid",
-});
+// CommentReply.belongsTo(User, {
+//     foreignKey: "fromUid",
+// });
 
 // 关联评论者id
-CommentReply.belongsTo(User, {
-    foreignKey: "toUid",
-});
+// CommentReply.belongsTo(User, {
+//     foreignKey: "toUid",
+// });
 
 module.exports = {
     Article,

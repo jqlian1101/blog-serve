@@ -7,7 +7,7 @@ const {
     queryFailInfo,
 } = require("../model/ErrorInfo");
 
-const { createComment, getComments } = require("../services/comment");
+const { createComment, getComments, getReplies, createCommentReply } = require("../services/comment");
 
 /**
  * 发表comment
@@ -35,11 +35,47 @@ const getCommentsByArticleId = async (params = {}) => {
         const result = await getComments({ articleId: id });
         return new SuccessModel(result);
     } catch (e) {
+        console.log(e);
         return new ErrorModel(queryFailInfo);
     }
 };
 
+/**
+ * 通过评论id查询回复列表
+ */
+const getRepliesByCommentId = async (params = {}) => {
+    const { id } = params;
+    if (!id) {
+        return new ErrorModel(queryParamsFailInfo);
+    }
+
+    try {
+        const result = await getReplies({ commentId: id });
+        return new SuccessModel(result);
+    } catch (e) {
+        console.log(e)
+        return new ErrorModel(queryFailInfo);
+    }
+}
+
+const setCommentReply = async (params = {}) => {
+    const { commentId } = params;
+    if (!commentId) {
+        return new ErrorModel(queryParamsFailInfo);
+    }
+
+    try {
+        const result = await createCommentReply({ ...params });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e)
+        return new ErrorModel(queryParamsFailInfo);
+    }
+}
+
 module.exports = {
     comment,
     getCommentsByArticleId,
+    getRepliesByCommentId,
+    setCommentReply
 };

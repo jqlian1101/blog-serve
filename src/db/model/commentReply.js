@@ -30,22 +30,34 @@ const CommentReply = seq.define(
             allowNull: false,
             comment: "回复内容",
         },
-        toUid: {
-            type: INTEGER,
-            allowNull: false,
-            comment: "评论用户id",
-        },
-        fromUid: {
-            type: INTEGER,
-            allowNull: false,
-            comment: "回复用户id",
-        },
+        // toUid: {
+        //     type: INTEGER,
+        //     allowNull: true,
+        //     comment: "评论用户id",
+        // },
+        // fromUid: {
+        //     type: INTEGER,
+        //     allowNull: true,
+        //     comment: "回复用户id",
+        // },
         isAuthor: {
             type: INTEGER,
             allowNull: false,
             defaultValue: 0,
             comment: "0为普通回复，1为后台管理员回复",
         },
+        status: {
+            type: INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+            comment: "评论状态，0为待审核，1为已发布",
+        },
+        likeNum: {
+            type: INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+            comment: "点赞次数",
+        }
     },
     {
         freezeTableName: true,
