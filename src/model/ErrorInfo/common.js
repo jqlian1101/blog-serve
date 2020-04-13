@@ -13,5 +13,10 @@ module.exports = {
     queryParamsFailInfo: {
         code: 10002,
         message: "请求参数错误"
+    },
+    // 操作失败
+    operateFailInfo: {
+        code: 10003,
+        message: "操作失败，请稍后再试"
     }
 };

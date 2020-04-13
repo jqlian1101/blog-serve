@@ -6,7 +6,8 @@ const {
     createArticles,
     queryArticles,
     destoryArticle,
-    setArticleStatus
+    setArticleStatus,
+    updateArticle
 } = require("../services/article");
 
 const { queryArticleTags, createArticleTags } = require("../services/tag");
@@ -185,6 +186,24 @@ const changeArticleStatus = async ({ id, status = 0 }) => {
     }
 };
 
+const updateArticleInfo = async (params) => {
+    if (!params.id) {
+        return new ErrorModel({
+            ...queryParamsFailInfo
+        });
+    }
+
+    try {
+        await updateArticle({ ...params });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...operateFailInfo
+        });
+    }
+}
+
 /**
  * 获取文章标签列表
  */
@@ -274,5 +293,7 @@ module.exports = {
     createArticleTag,
 
     getCategoryList,
-    createArticleCategory
+    createArticleCategory,
+
+    updateArticleInfo
 };

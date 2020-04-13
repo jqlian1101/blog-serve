@@ -144,9 +144,37 @@ const setArticleStatus = async ({ id, status }) => {
     return result[0] > 0; // 修改的行数
 };
 
+const getArticleInfo = async (id, attr = []) => {
+    const result = await Article.findByPk(id, {
+        attributes: attr,
+    });
+
+    return result.dataValues;
+}
+
+const updateArticle = async (params) => {
+    const { id, isReadNum, isLike } = params;
+
+    const updateParams = {};
+    const attr = [];
+
+    if (isReadNum) attr.push('readNumber')
+    if (isLike) attr.push('like')
+
+    const oldAttrsKV = await getArticleInfo(id, attr);
+
+    attr.map((item) => {
+        updateParams[item] = isNil(oldAttrsKV[item]) ? 1 : Number(oldAttrsKV[item]) + 1;
+    })
+
+    const result = await Article.update({ ...updateParams }, { where: { id } });
+    return result[0] > 0; // 修改的行数
+}
+
 module.exports = {
     createArticles,
     queryArticles,
     destoryArticle,
     setArticleStatus,
+    updateArticle
 };

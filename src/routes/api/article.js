@@ -6,6 +6,7 @@ const {
     createArticle,
     deleteArticle,
     changeArticleStatus,
+    updateArticleInfo
 
     // getTagList,
     // createArticleTag,
@@ -85,6 +86,22 @@ router.post("/change-status", async (ctx, next) => {
  */
 router.post("/comment", async (ctx, next) => {
     ctx.body = await comment({ ...ctx.request.body });
+});
+
+/**
+ * 更新阅读量
+ */
+router.post("/:articleId/readNum", async (ctx, next) => {
+    const { articleId } = ctx.params;
+    ctx.body = await updateArticleInfo({ id: articleId, isReadNum: true });
+});
+
+/**
+ * 更新赞的数量
+ */
+router.post("/:articleId/like", async (ctx, next) => {
+    const { articleId } = ctx.params;
+    ctx.body = await updateLi({ id: articleId, isLike: true });
 });
 
 /**
