@@ -8,46 +8,49 @@ const {
     operateFailInfo
 } = require("../model/ErrorInfo");
 
-const { createComment, getComments, queryComments, updateComment } = require("../services/comment");
+const { createReply, queryReplies, updateReplies } = require("../services/reply");
+
 
 /**
- * 发表comment
+ * 通过评论id查询回复列表
  */
-const comment = async (params) => {
-    const { content } = params;
-    try {
-        await createComment({ ...params, content: xss(content) });
-        return new SuccessModel();
-    } catch (e) {
-        return new ErrorModel(createCommentFailInfo);
-    }
-};
-
-/**
- * 通过文章id查询评论
- */
-const getCommentsByArticleId = async (params = {}) => {
+const getRepliesByCommentId = async (params = {}) => {
     const { id } = params;
     if (!id) {
         return new ErrorModel(queryParamsFailInfo);
     }
 
     try {
-        const result = await getComments({ articleId: id });
+        const result = await queryReplies({ commentId: id });
         return new SuccessModel(result);
     } catch (e) {
-        console.log(e);
+        console.log(e)
         return new ErrorModel(queryFailInfo);
     }
-};
+}
+
+const createCommentReply = async (params = {}) => {
+    const { commentId } = params;
+    if (!commentId) {
+        return new ErrorModel(queryParamsFailInfo);
+    }
+
+    try {
+        const result = await createReply({ ...params });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e)
+        return new ErrorModel(queryParamsFailInfo);
+    }
+}
 
 /**
  * 查询评论列表
  */
-const getCommentAllList = async (params) => {
+const getReplyAllList = async (params) => {
     const { pageSize = PAGE_SIZE, current = 1, ...otherParams } = params;
     try {
-        const data = await queryComments({ pageSize, current, ...otherParams });
+        const data = await queryReplies({ pageSize, current, ...otherParams });
         return new SuccessModel({
             ...data,
             pageSize,
@@ -62,16 +65,16 @@ const getCommentAllList = async (params) => {
 }
 
 /**
- * 更新comment数据
+ * 更新回复数据
  */
-const updateCommentInfo = async (params) => {
+const updateReplyInfo = async (params) => {
     const { id, ...otherParams } = params;
     if (!id) {
         return new ErrorModel(queryParamsFailInfo);
     }
 
     try {
-        await updateComment({ ...params });
+        await updateReplies({ ...params });
         return new SuccessModel();
     } catch (e) {
         console.log(e);
@@ -83,9 +86,8 @@ const updateCommentInfo = async (params) => {
 }
 
 module.exports = {
-    comment,
-    getCommentsByArticleId,
-
-    getCommentAllList,
-    updateCommentInfo
+    getRepliesByCommentId,
+    createCommentReply,
+    getReplyAllList,
+    updateReplyInfo
 };

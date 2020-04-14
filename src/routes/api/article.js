@@ -14,7 +14,9 @@ const {
     // createArticleCategory,
 } = require("../../controller/article");
 
-const { comment, getCommentsByArticleId, getRepliesByCommentId, setCommentReply } = require("../../controller/comment");
+const { comment, getCommentsByArticleId } = require("../../controller/comment");
+
+const { createCommentReply, getRepliesByCommentId } = require("../../controller/reply");
 
 router.prefix("/article");
 
@@ -99,9 +101,9 @@ router.post("/:articleId/readNum", async (ctx, next) => {
 /**
  * 更新赞的数量
  */
-router.post("/:articleId/like", async (ctx, next) => {
-    const { articleId } = ctx.params;
-    ctx.body = await updateLi({ id: articleId, isLike: true });
+router.post("/:id/like", async (ctx, next) => {
+    const { id } = ctx.params;
+    ctx.body = await updateArticleInfo({ id, isLike: true })
 });
 
 /**
@@ -130,7 +132,7 @@ router.post("/:commentId/reply", async (ctx, next) => {
         ...ctx.request.body,
         commentId
     }
-    ctx.body = await setCommentReply({ ...query });
+    ctx.body = await createCommentReply({ ...query });
 });
 
 // /**

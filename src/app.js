@@ -10,6 +10,8 @@ const cors = require("koa2-cors");
 const articleAPI = require("./routes/api/article");
 const tagAPI = require("./routes/api/tag");
 const categoryAPI = require("./routes/api/category");
+const commentAPI = require("./routes/api/comment");
+const replyAPI = require("./routes/api/reply");
 
 // error handler
 onerror(app);
@@ -46,6 +48,8 @@ app.use(async (ctx, next) => {
 app.use(articleAPI.routes(), articleAPI.allowedMethods());
 app.use(tagAPI.routes(), tagAPI.allowedMethods());
 app.use(categoryAPI.routes(), categoryAPI.allowedMethods());
+app.use(commentAPI.routes(), commentAPI.allowedMethods());
+app.use(replyAPI.routes(), replyAPI.allowedMethods());
 
 // error-handling
 app.on("error", (err, ctx) => {

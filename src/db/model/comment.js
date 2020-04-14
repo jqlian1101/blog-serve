@@ -12,7 +12,12 @@ const Comment = seq.define(
         topicId: {
             type: INTEGER,
             allowNull: false,
-            comment: "主题",
+            comment: "文章id",
+        },
+        topicTitle: {
+            type: INTEGER,
+            allowNull: false,
+            comment: "主题标题",
         },
         content: {
             type: TEXT,

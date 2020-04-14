@@ -1,5 +1,21 @@
 const { Comment, CommentReply } = require("../db/model/index");
 
+const { isNil } = require('../utils/util')
+
+const QUERY_LIST_ATTRS_COMMENT = [
+    "id",
+    "topicId",
+    "topicTitle",
+    "status",
+    "isTop",
+    "likeNum",
+    "replyNum",
+    "fromUid",
+    "content",
+    ["create_date", "createDate"]
+    // ['create_daet', "createDate"]
+]
+
 /**
  * 创建评论
  */
@@ -39,12 +55,21 @@ const getCommentsByArticleId = async (id) => {
     };
 };
 
+const getCommentsById = async (id) => {
+    const result = await Comment.findByPk(id, {
+        attributes: [...QUERY_LIST_ATTRS_COMMENT],
+    });
+
+    return result.dataValues;
+}
+
 /**
  * 查询评论
  */
 const getComments = async (params = {}) => {
-    const { articleId } = params;
+    const { articleId, id } = params;
     if (articleId) return await getCommentsByArticleId(articleId);
+    if (id) return await getCommentsById(id);
 };
 
 
@@ -84,9 +109,56 @@ const createCommentReply = async (params = {}) => {
     return result.dataValues;
 }
 
+/**
+ * 查询评论列表
+ */
+const queryComments = async (query) => {
+    const { pageSize, current, status, ...otherParams } = query;
+
+    const searchRule = {};
+    !isNil(status) && (searchRule.status = status);
+
+    const result = await Comment.findAndCountAll({
+        limit: pageSize,
+        offset: pageSize * (current - 1),
+        order: [["create_date", "desc"]],
+        where: searchRule,
+        attributes: [...QUERY_LIST_ATTRS_COMMENT],
+        ...otherParams,
+    });
+
+    return {
+        result: result.rows.map((item) => item.dataValues),
+        count: result.count,
+    };
+}
+
+const updateComment = async (params) => {
+    const { id, isLike } = params;
+
+    const updateParams = {};
+    const attr = [];
+
+    if (isLike) attr.push('likeNum')
+
+    const oldAttrsKV = await getCommentsById(id);
+
+    attr.map((item) => {
+        if (item === 'likeNum') {
+            updateParams[item] = isNil(oldAttrsKV[item]) ? 1 : Number(oldAttrsKV[item]) + 1;
+        }
+    })
+
+    const result = await Comment.update({ ...updateParams }, { where: { id } });
+    return result[0] > 0; // 修改的行数
+}
+
 module.exports = {
     createComment,
     getComments,
     createCommentReply,
-    getReplies
+    getReplies,
+
+    queryComments,
+    updateComment
 };
