@@ -70,6 +70,7 @@ Comment.hasMany(CommentReply, {
 CommentReply.belongsTo(Comment, {
     foreignKey: 'commentId',
     targetKey: 'id',
+    as: 'replies'
 })
 
 

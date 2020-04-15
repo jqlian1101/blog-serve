@@ -8,7 +8,7 @@ const {
     operateFailInfo
 } = require("../model/ErrorInfo");
 
-const { createComment, getComments, queryComments, updateComment } = require("../services/comment");
+const { createComment, getComments, queryComments, updateComment, deleteComment } = require("../services/comment");
 
 /**
  * 发表comment
@@ -19,6 +19,7 @@ const comment = async (params) => {
         await createComment({ ...params, content: xss(content) });
         return new SuccessModel();
     } catch (e) {
+        console.log(e);
         return new ErrorModel(createCommentFailInfo);
     }
 };
@@ -79,7 +80,23 @@ const updateCommentInfo = async (params) => {
             ...operateFailInfo
         });
     }
+}
 
+const deleteCommentById = async (params) => {
+    const { id } = params;
+    if (!id) {
+        return new ErrorModel(queryParamsFailInfo);
+    }
+
+    try {
+        await deleteComment({ ...params });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...operateFailInfo
+        });
+    }
 }
 
 module.exports = {
@@ -87,5 +104,6 @@ module.exports = {
     getCommentsByArticleId,
 
     getCommentAllList,
-    updateCommentInfo
+    updateCommentInfo,
+    deleteCommentById
 };

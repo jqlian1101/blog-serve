@@ -110,8 +110,29 @@ const updateReplies = async (params) => {
     return result[0] > 0; // 修改的行数
 }
 
+/**
+ * 通过id删除回复
+ */
+const deleteRepliesbyId = async (id) => {
+    const result = await CommentReply.destroy({
+        where: {
+            id,
+        }
+    });
+
+    return result > 0;
+}
+
+/**
+ * 删除回复
+ */
+const deleteReplies = async (params) => {
+    if (params.id) return await deleteRepliesbyId(params.id)
+}
+
 module.exports = {
     createReply,
     queryReplies,
-    updateReplies
+    updateReplies,
+    deleteReplies
 };

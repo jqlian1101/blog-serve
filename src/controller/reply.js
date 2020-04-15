@@ -8,7 +8,7 @@ const {
     operateFailInfo
 } = require("../model/ErrorInfo");
 
-const { createReply, queryReplies, updateReplies } = require("../services/reply");
+const { createReply, queryReplies, updateReplies, deleteReplies } = require("../services/reply");
 
 
 /**
@@ -47,7 +47,7 @@ const createCommentReply = async (params = {}) => {
 /**
  * 查询评论列表
  */
-const getReplyAllList = async (params) => {
+const getRepliesAllList = async (params) => {
     const { pageSize = PAGE_SIZE, current = 1, ...otherParams } = params;
     try {
         const data = await queryReplies({ pageSize, current, ...otherParams });
@@ -85,9 +85,27 @@ const updateReplyInfo = async (params) => {
 
 }
 
+const deleteRepliesById = async (params) => {
+    const { id } = params;
+    if (!id) {
+        return new ErrorModel(queryParamsFailInfo);
+    }
+
+    try {
+        await deleteReplies({ ...params });
+        return new SuccessModel();
+    } catch (e) {
+        console.log(e);
+        return new ErrorModel({
+            ...operateFailInfo
+        });
+    }
+}
+
 module.exports = {
     getRepliesByCommentId,
     createCommentReply,
-    getReplyAllList,
-    updateReplyInfo
+    getRepliesAllList,
+    updateReplyInfo,
+    deleteRepliesById
 };

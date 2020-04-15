@@ -20,10 +20,11 @@ const QUERY_LIST_ATTRS_COMMENT = [
  * 创建评论
  */
 const createComment = async (params) => {
-    const { topicId, content } = params;
+    const { topicId, content, topicTitle } = params;
     const result = await Comment.create({
         topicId,
         content,
+        topicTitle
     });
 
     return result.dataValues;
@@ -134,23 +135,47 @@ const queryComments = async (query) => {
 }
 
 const updateComment = async (params) => {
-    const { id, isLike } = params;
+    const { id, isLike, ...otherParams } = params;
 
     const updateParams = {};
-    const attr = [];
-
-    if (isLike) attr.push('likeNum')
 
     const oldAttrsKV = await getCommentsById(id);
 
-    attr.map((item) => {
-        if (item === 'likeNum') {
-            updateParams[item] = isNil(oldAttrsKV[item]) ? 1 : Number(oldAttrsKV[item]) + 1;
-        }
-    })
+    for (const key of Object.keys(oldAttrsKV)) {
+        if (!isNil(otherParams[key])) updateParams[key] = otherParams[key];
+    }
+
+    if (isLike) {
+        updateParams['likeNum'] = isNil(oldAttrsKV['likeNum']) ? 1 : Number(oldAttrsKV['likeNum']) + 1;
+    }
 
     const result = await Comment.update({ ...updateParams }, { where: { id } });
     return result[0] > 0; // 修改的行数
+}
+
+const deleteCommentbyId = async (id) => {
+    try {
+        const comment = await Comment.findByPk(id)
+
+        const replies = await comment.getReplies();
+
+        for (let i = 0; i < replies.length; i++) {
+            await replies[i].destroy();
+        }
+
+        await comment.destroy();
+
+        return true;
+    } catch (e) {
+        return false
+    }
+}
+
+/**
+ * 删除评论
+ */
+const deleteComment = async (params) => {
+    if (params.id) return await deleteCommentbyId(params.id)
 }
 
 module.exports = {
@@ -160,5 +185,6 @@ module.exports = {
     getReplies,
 
     queryComments,
-    updateComment
+    updateComment,
+    deleteComment
 };

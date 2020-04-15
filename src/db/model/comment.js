@@ -15,7 +15,7 @@ const Comment = seq.define(
             comment: "文章id",
         },
         topicTitle: {
-            type: INTEGER,
+            type: TEXT,
             allowNull: false,
             comment: "主题标题",
         },

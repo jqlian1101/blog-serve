@@ -2,7 +2,8 @@ const router = require("koa-router")();
 
 const {
     getRepliesAllList,
-    updateReplyInfo
+    updateReplyInfo,
+    deleteRepliesById
 } = require("../../controller/reply");
 
 router.prefix("/reply");
@@ -25,6 +26,14 @@ router.post("/list", async (ctx, next) => {
 router.post("/:id/like", async (ctx, next) => {
     const { id } = ctx.params;
     ctx.body = await updateReplyInfo({ id, isLike: true })
+});
+
+/**
+ * 删除回复
+ */
+router.post("/del", async (ctx, next) => {
+    const content = ctx.request.body;
+    ctx.body = await deleteRepliesById({ ...content });
 });
 
 

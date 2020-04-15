@@ -2,7 +2,8 @@ const router = require("koa-router")();
 
 const {
     getCommentAllList,
-    updateCommentInfo
+    updateCommentInfo,
+    deleteCommentById
 } = require("../../controller/comment");
 
 router.prefix("/comment");
@@ -26,6 +27,23 @@ router.post("/list", async (ctx, next) => {
 router.post("/:id/like", async (ctx, next) => {
     const { id } = ctx.params;
     ctx.body = await updateCommentInfo({ id, isLike: true })
+});
+
+/**
+ * 修改评论状态
+ */
+router.post("/:id/resetStatus", async (ctx, next) => {
+    const { id } = ctx.params;
+    const { status } = ctx.request.body;
+    ctx.body = await updateCommentInfo({ id, status })
+});
+
+/**
+ * 删除评论
+ */
+router.post("/del", async (ctx, next) => {
+    const content = ctx.request.body;
+    ctx.body = await deleteCommentById({ ...content });
 });
 
 
