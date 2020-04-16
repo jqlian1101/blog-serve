@@ -4,5 +4,6 @@
 
 module.exports = {
     CRYPTO_SECRET_KEY: 'lian123ui_lian$@',
-    SESSION_SECRET_KEY: 'jq_1101#$'
+    SESSION_SECRET_KEY: 'jq_1101#$',
+    JWT_SECRET_KEY: 'Lian*&JWT!009'
 }
