@@ -10,12 +10,12 @@ const {
     updateArticle
 } = require("../services/article");
 
-const { queryArticleTags, createArticleTags } = require("../services/tag");
+// const { queryArticleTags, createArticleTags } = require("../services/tag");
 
-const {
-    queryArticleCategory,
-    createArticleCategoty
-} = require("../services/category");
+// const {
+//     queryArticleCategory,
+//     createArticleCategoty
+// } = require("../services/category");
 
 const {
     createArticleCategoryRelation,
@@ -29,7 +29,7 @@ const {
 
 const {
     queryFailInfo,
-    createTagFailInfo,
+    // createTagFailInfo,
     createArticleFailInfo,
     queryParamsFailInfo,
     deleteArticleFailInfo
@@ -204,83 +204,83 @@ const updateArticleInfo = async (params) => {
     }
 }
 
-/**
- * 获取文章标签列表
- */
-const getTagList = async (params = {}) => {
-    try {
-        const data = await queryArticleTags();
-        return new SuccessModel({
-            result: data.map(item => ({ id: item.id, name: item.name }))
-        });
-    } catch (e) {
-        console.log(e);
-        return new ErrorModel({
-            ...queryFailInfo
-        });
-    }
-};
+// /**
+//  * 获取文章标签列表
+//  */
+// const getTagList = async (params = {}) => {
+//     try {
+//         const data = await queryArticleTags();
+//         return new SuccessModel({
+//             result: data.map(item => ({ id: item.id, name: item.name }))
+//         });
+//     } catch (e) {
+//         console.log(e);
+//         return new ErrorModel({
+//             ...queryFailInfo
+//         });
+//     }
+// };
 
-/**
- * 创建标签
- */
-const createArticleTag = async (params = {}) => {
-    const { name } = params;
-    if (!name) {
-        return new ErrorModel({
-            ...queryParamsFailInfo
-        });
-    }
+// /**
+//  * 创建标签
+//  */
+// const createArticleTag = async (params = {}) => {
+//     const { name } = params;
+//     if (!name) {
+//         return new ErrorModel({
+//             ...queryParamsFailInfo
+//         });
+//     }
 
-    try {
-        await createArticleTags({ name });
-        return new SuccessModel();
-    } catch (e) {
-        console.log(e);
-        return new ErrorModel({
-            ...createTagFailInfo
-        });
-    }
-};
+//     try {
+//         await createArticleTags({ name });
+//         return new SuccessModel();
+//     } catch (e) {
+//         console.log(e);
+//         return new ErrorModel({
+//             ...createTagFailInfo
+//         });
+//     }
+// };
 
-/**
- * 获取文章分类列表
- */
-const getCategoryList = async (params = {}) => {
-    try {
-        const data = await queryArticleCategory();
-        return new SuccessModel({
-            result: data.map(item => ({ id: item.id, name: item.name }))
-        });
-    } catch (e) {
-        console.log(e);
-        return new ErrorModel({
-            ...queryFailInfo
-        });
-    }
-};
+// /**
+//  * 获取文章分类列表
+//  */
+// const getCategoryList = async (params = {}) => {
+//     try {
+//         const data = await queryArticleCategory();
+//         return new SuccessModel({
+//             result: data.map(item => ({ id: item.id, name: item.name }))
+//         });
+//     } catch (e) {
+//         console.log(e);
+//         return new ErrorModel({
+//             ...queryFailInfo
+//         });
+//     }
+// };
 
-/**
- * 创建分类
- */
-const createArticleCategory = async (params = {}) => {
-    const { name } = params;
-    if (!name) {
-        return new ErrorModel({
-            ...queryParamsFailInfo
-        });
-    }
+// /**
+//  * 创建分类
+//  */
+// const createArticleCategory = async (params = {}) => {
+//     const { name } = params;
+//     if (!name) {
+//         return new ErrorModel({
+//             ...queryParamsFailInfo
+//         });
+//     }
 
-    try {
-        await createArticleCategoty({ name });
-        return new SuccessModel();
-    } catch (e) {
-        console.log(e);
-        return new ErrorModel({
-            ...createTagFailInfo
-        });
-    }
-};
+//     try {
+//         await createArticleCategoty({ name });
+//         return new SuccessModel();
+//     } catch (e) {
+//         console.log(e);
+//         return new ErrorModel({
+//             ...createTagFailInfo
+//         });
+//     }
+// };
 
 module.exports = {
     getArticleList,
@@ -289,11 +289,11 @@ module.exports = {
     deleteArticle,
     changeArticleStatus,
 
-    getTagList,
-    createArticleTag,
+    // getTagList,
+    // createArticleTag,
 
-    getCategoryList,
-    createArticleCategory,
+    // getCategoryList,
+    // createArticleCategory,
 
     updateArticleInfo
 };

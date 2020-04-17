@@ -5,7 +5,6 @@ const {
     register
 } = require("../../controller/user");
 
-const { verifyToken } = require('../../middlewares/jwt')
 router.prefix("/user");
 
 /**
@@ -24,12 +23,5 @@ router.post("/login", async (ctx, next) => {
     ctx.body = await login({ ...ctx.request.body });
 });
 
-/**
- * 登录
- * @params {Object} ctx.body { username, password }
- */
-router.post("/test", verifyToken, async (ctx, next) => {
-    ctx.body = 0;
-});
 
 module.exports = router;

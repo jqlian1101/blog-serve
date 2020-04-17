@@ -1,6 +1,7 @@
 const router = require("koa-router")();
 
 const { getList, create, del } = require("../../controller/category");
+const { verifyToken } = require('../../middlewares/jwt');
 
 router.prefix("/category");
 
@@ -15,7 +16,7 @@ router.post("/list", async (ctx, next) => {
 /**
  * 创建tag
  */
-router.post("/create", async (ctx, next) => {
+router.post("/create", verifyToken, async (ctx, next) => {
     const { name } = ctx.request.body;
     ctx.body = await create({ name });
 });
@@ -23,7 +24,7 @@ router.post("/create", async (ctx, next) => {
 /**
  * 删除tag
  */
-router.post("/del", async (ctx, next) => {
+router.post("/del", verifyToken, async (ctx, next) => {
     const { id } = ctx.request.body;
     ctx.body = await del({ id });
 });

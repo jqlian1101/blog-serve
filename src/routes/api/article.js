@@ -15,8 +15,9 @@ const {
 } = require("../../controller/article");
 
 const { comment, getCommentsByArticleId } = require("../../controller/comment");
-
 const { createCommentReply, getRepliesByCommentId } = require("../../controller/reply");
+
+const { verifyToken } = require('../../middlewares/jwt')
 
 router.prefix("/article");
 
@@ -62,7 +63,7 @@ router.post("/detail", async (ctx, next) => {
 /**
  * 创建文章
  */
-router.post("/create", async (ctx, next) => {
+router.post("/create", verifyToken,async (ctx, next) => {
     const content = ctx.request.body;
     ctx.body = await createArticle({ ...content });
 });
@@ -70,7 +71,7 @@ router.post("/create", async (ctx, next) => {
 /**
  * 删除文章
  */
-router.post("/del", async (ctx, next) => {
+router.post("/del", verifyToken, async (ctx, next) => {
     const content = ctx.request.body;
     ctx.body = await deleteArticle({ ...content });
 });
@@ -78,7 +79,7 @@ router.post("/del", async (ctx, next) => {
 /**
  * 修改文章发布状态
  */
-router.post("/change-status", async (ctx, next) => {
+router.post("/change-status", verifyToken, async (ctx, next) => {
     const { id, status } = ctx.request.body;
     ctx.body = await changeArticleStatus({ id, status });
 });

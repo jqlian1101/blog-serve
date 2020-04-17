@@ -5,6 +5,7 @@ const {
     updateReplyInfo,
     deleteRepliesById
 } = require("../../controller/reply");
+const { verifyToken } = require('../../middlewares/jwt');
 
 router.prefix("/reply");
 
@@ -31,7 +32,7 @@ router.post("/:id/like", async (ctx, next) => {
 /**
  * 删除回复
  */
-router.post("/del", async (ctx, next) => {
+router.post("/del", verifyToken, async (ctx, next) => {
     const content = ctx.request.body;
     ctx.body = await deleteRepliesById({ ...content });
 });

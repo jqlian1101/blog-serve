@@ -5,6 +5,7 @@ const {
     updateCommentInfo,
     deleteCommentById
 } = require("../../controller/comment");
+const { verifyToken } = require('../../middlewares/jwt');
 
 router.prefix("/comment");
 
@@ -32,7 +33,7 @@ router.post("/:id/like", async (ctx, next) => {
 /**
  * 修改评论状态
  */
-router.post("/:id/resetStatus", async (ctx, next) => {
+router.post("/:id/resetStatus", verifyToken, async (ctx, next) => {
     const { id } = ctx.params;
     const { status } = ctx.request.body;
     ctx.body = await updateCommentInfo({ id, status })
@@ -41,7 +42,7 @@ router.post("/:id/resetStatus", async (ctx, next) => {
 /**
  * 删除评论
  */
-router.post("/del", async (ctx, next) => {
+router.post("/del", verifyToken, async (ctx, next) => {
     const content = ctx.request.body;
     ctx.body = await deleteCommentById({ ...content });
 });

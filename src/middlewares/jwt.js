@@ -36,7 +36,7 @@ const getToken = (ctx) => {
  * @param {*} ctx
  * @param {*} next
  */
-const verifyToken = (ctx, next) => {
+const verifyToken = async (ctx, next) => {
     const token = getToken(ctx);
 
     if (!token) {
@@ -49,7 +49,7 @@ const verifyToken = (ctx, next) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         ctx.tokenInfo = decoded;
-        next();
+        await next();
     } catch (err) {
         // token认证失败
         ctx.body = new ErrorModel({
